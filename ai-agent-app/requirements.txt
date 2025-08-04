@@ -1,0 +1,7 @@
+streamlit
+requests
+langchain-google-vertexai
+langchain-community
+langchain
+google-cloud-aiplatform
+google-search-results
