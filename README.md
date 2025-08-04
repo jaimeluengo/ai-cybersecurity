@@ -2,6 +2,8 @@
 
 This repository showcases the evolution of an AI-powered cybersecurity analysis tool, demonstrating a progression from a simple summarization chain to a complex, multi-agent system. Each application builds upon the last, offering a practical look at how to increase the autonomy and capability of AI agents using LangChain and Google Vertex AI.
 
+https://github.com/user-attachments/assets/008ac985-b704-4d6f-95b4-d3787e32d52b
+
 ## Project Structure
 
 This repository is organized into several applications, each representing a different level of complexity.
