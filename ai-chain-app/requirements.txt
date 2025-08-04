@@ -1,0 +1,5 @@
+streamlit
+requests
+langchain-google-vertexai
+langchain-core
+google-cloud-aiplatform
