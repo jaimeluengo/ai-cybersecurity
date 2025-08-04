@@ -1,46 +1,48 @@
-# 🕵️ AI-Powered Cybersecurity Analysis Agent
+# 🕵️ AI Cybersecurity Agent Evolution
 
-This project is a web-based, AI-powered agent designed for cybersecurity analysis. It uses a Large Language Model (LLM) through Google's Vertex AI, combined with LangChain's ReAct agent framework, to autonomously investigate potential threats like file hashes.
+This repository showcases the evolution of an AI-powered cybersecurity analysis tool, demonstrating a progression from a simple summarization chain to a complex, multi-agent system. Each application builds upon the last, offering a practical look at how to increase the autonomy and capability of AI agents using LangChain and Google Vertex AI.
 
-The agent is equipped with tools to query the VirusTotal API and perform real-time web searches, allowing it to gather context, form a hypothesis, and deliver a comprehensive report within an interactive Streamlit user interface.
+## Project Structure
 
-![Screenshot of the application UI](https://via.placeholder.com/800x450.png?text=App+Screenshot+Here)
-_(Replace this with a real screenshot of your application)_
+This repository is organized into several applications, each representing a different level of complexity.
 
-## ✨ Features
+- **`/local`**: Contains command-line versions of the applications. These are useful for quick, headless testing and understanding the core logic without a UI.
 
-- **Autonomous Investigation:** The agent can decide which tools to use and in what order to answer a user's query.
-- **Interactive UI:** A user-friendly Streamlit interface provides a "mission log" that shows the agent's real-time thought process.
-- **Real-Time Web Search:** Uses SerpAPI to gather up-to-the-minute context on malware families, threat actors, and other indicators.
-- **VirusTotal Integration:** Directly queries the VirusTotal API for detailed reports on file hashes.
-- **Cloud-Native Deployment:** Ready to be deployed as a containerized application on Google Cloud Run.
+- **`/ai-chain-app` (Level 1: Simple Summarizer)**: A basic Streamlit application that uses a simple LangChain "chain". It takes a raw VirusTotal JSON report and feeds it to an LLM with a prompt to generate a human-readable summary. This represents the most basic form of LLM integration.
 
-## 🛠️ Tech Stack
+- **`/ai-agent-app` (Level 2: ReAct Agent)**: An evolution of the first app, this introduces a single, autonomous agent built with the ReAct (Reasoning and Acting) framework. The agent can use tools like VirusTotal and web search to actively investigate a threat, showing its thought process in real-time.
 
-- **Framework:** [Streamlit](https://streamlit.io/)
-- **AI/LLM Orchestration:** [LangChain](https://www.langchain.com/)
-- **LLM Provider:** [Google Vertex AI](https://cloud.google.com/vertex-ai) (Gemini 2.5 Pro)
-- **Tools:** [VirusTotal API](https://www.virustotal.com/), [SerpAPI](https://serpapi.com/)
-- **Containerization:** [Docker](https://www.docker.com/)
-- **Deployment:** [Google Cloud Run](https://cloud.google.com/run)
+- **`/multi-agent-app` (Level 3: Multi-Agent Mapper)**: The most advanced implementation, this application uses LangGraph to orchestrate a team of specialized AI agents. A "Pivoting" agent explores threat infrastructure, and a "Correlator" agent analyzes the findings to produce a comprehensive map and report on a potential threat campaign.
 
 ---
 
-## 🚀 Getting Started
+## Tech Stack
+
+- **Framework:** Streamlit
+- **AI/LLM Orchestration:** LangChain
+- **Multi-Agent Orchestration:** LangGraph
+- **LLM Provider:** Google Vertex AI (Gemini 2.5 Pro)
+- **Tools:** VirusTotal API, SerpAPI
+- **Containerization:** Docker
+- **Deployment:** Google Cloud Run
+
+---
+
+## Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
 - Python 3.10+
-- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installed and authenticated.
+- Google Cloud SDK installed and authenticated.
 - Access to a Google Cloud Project with the Vertex AI API enabled.
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd virus-total-agent/ai-agent-app
+git clone https://github.com/jaimeluengo/ai-cybersecurity.git
+cd ai-cybersecurity
 ```
 
 ### 2. Set Up a Virtual Environment
@@ -55,7 +57,7 @@ source venv/bin/activate
 
 ### 3. Install Dependencies
 
-Install all the required Python packages.
+Navigate into the directory of the app you want to run (e.g., `cd multi-agent-app`) and install its dependencies.
 
 ```bash
 pip install -r requirements.txt
@@ -63,7 +65,7 @@ pip install -r requirements.txt
 
 ### 4. Configure Environment Variables
 
-This application requires three API keys to function. Create a `.env` file in the `ai-agent-app` directory and add your keys:
+Each application requires API keys to function. Create a `.env` file inside the specific app's directory (e.g., `multi-agent-app/.env`) and add your keys:
 
 ```
 # .env
@@ -78,9 +80,9 @@ You will also need to authenticate your local environment with Google Cloud:
 gcloud auth application-default login
 ```
 
-### 5. Run the Application Locally
+### 5. Run an Application Locally
 
-Once the setup is complete, you can run the Streamlit app with the following command:
+From within an application's directory (e.g., `multi-agent-app`), run the Streamlit app:
 
 ```bash
 streamlit run app.py
@@ -90,29 +92,26 @@ Open your web browser and navigate to `http://localhost:8501`.
 
 ---
 
-## ☁️ Deployment to Google Cloud Run
+## Deployment to Google Cloud Run
 
-This application is designed to be deployed as a container on Google Cloud Run.
+Each application is designed to be deployed as a container on Google Cloud Run. The following example shows how to deploy the `multi-agent-app`.
 
 1.  **Build the container image using Cloud Build:**
+    _(Run this command from within the `multi-agent-app` directory)_
 
     ```bash
-    gcloud builds submit --tag gcr.io/your-gcp-project-id-here/vt-agent-app .
+    gcloud builds submit --tag gcr.io/[YOUR_GCP_PROJECT_ID]/multi-agent-threat-mapper .
     ```
 
 2.  **Deploy the image to Cloud Run:**
 
-    For a production environment, it is **strongly recommended** to use Google Secret Manager for your API keys instead of setting them as plain-text environment variables.
+    **Note on Security:** For a production environment, it is **strongly recommended** to use Google Secret Manager for your API keys instead of setting them as plain-text environment variables. The command below is for quick testing.
 
     ```bash
-    gcloud run deploy vt-agent-app \
-      --image gcr.io/your-gcp-project-id-here/vt-agent-app \
+    gcloud run deploy multi-agent-threat-mapper \
+      --image gcr.io/[YOUR_GCP_PROJECT_ID]/multi-agent-threat-mapper \
       --platform managed \
       --region us-central1 \
       --allow-unauthenticated \
-      --set-env-vars "VIRUSTOTAL_API_KEY=your_key,SERPAPI_API_KEY=your_key,GCP_PROJECT_ID=your_project_id"
+      --set-env-vars "VIRUSTOTAL_API_KEY=[YOUR_VT_KEY],SERPAPI_API_KEY=[YOUR_SERPAPI_KEY],GCP_PROJECT_ID=[YOUR_GCP_PROJECT_ID]"
     ```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
